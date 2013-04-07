@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<widget id="com.PaulFreund.WebLaunch" version="1.0" viewmodes="application" xmlns="http://www.w3.org/ns/widgets" xmlns:kindle="http://kindle.amazon.com/ns/widget-extensions">
+
+    <name xml:lang="en">WebLaunch</name>
+    <description xml:lang="en">WebLaunch</description>
+
+    <name xml:lang="de">WebLaunch</name>
+    <description xml:lang="de">WebLaunch</description>
+
+    <content src="index.html"/>
+
+    <kindle:permissions>
+        <kindle:permission name="local-port-access"/>
+        <kindle:permission name="download-allowed"/>
+    </kindle:permissions>
+
+    <kindle:network>
+        <kindle:asset key="user-agent" value="Mozilla/5.0 (X11; U; Linux armv7l like Android; en-us) AppleWebKit/531.2+ (KHTML, like Gecko) Version/5.0 Safari/533.2+ Kindle/3.0+" />
+        <kindle:asset key="enableWrsProxy" value="true" />
+    </kindle:network>
+
+    <kindle:cookiejar>
+        <kindle:asset key="persistent" value="true"/>
+        <kindle:asset key="usePrivateCookies" value="false"/>
+        <kindle:asset key="useDeviceCookies" value="false"/>
+    </kindle:cookiejar>
+
+    <kindle:chrome>
+        <kindle:asset key="configureSearchBar" value="none"/>
+    </kindle:chrome>
+
+    <kindle:gestures>
+        <kindle:param name="drag" value="yes"/>                                                                                                                              
+        <kindle:param name="pinchzoom" value="yes" properties="fire-on-zoom:1"/>                                                                                             
+        <kindle:param name="tap" value="yes"/>                                                                                                                               
+        <kindle:param name="multi_tap" value="yes"/>                                                                                                                         
+        <kindle:param name="hold" value="yes"/> 
+    </kindle:gestures>
+
+    <feature name="http://kindle.amazon.com/apis" required="true">
+        <param name="appmgr" value="yes"/> 
+        <param name="net" value="yes"/>
+        <param name="gestures" value="yes"/>
+    </feature>
+
+    <kindle:resources>
+        <kindle:asset key="AllowHTTPSApplicationManifestCrossDomain" value="true" />
+    </kindle:resources>
+
+    <kindle:settings>
+        <kindle:setting name="internetRequired" value="yes"/>
+        <kindle:setting name="debug" value="yes"/>
+    </kindle:settings>
+
+    <preference name="logging" value="enabled"/>
+</widget>
+

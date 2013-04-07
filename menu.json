@@ -1,0 +1,11 @@
+{
+	"items": [
+		{
+			"name": "WebLaunch",
+			"priority": 2,
+			"items": [
+				{"name": "WebLaunch", "priority": 0, "action": "bin/start.sh"}			
+			]
+		}
+	]
+}

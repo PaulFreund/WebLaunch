@@ -1,0 +1,48 @@
+<html lang="en" dir="ltr">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>WebLaunch</title>
+
+		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/Kindle.js"></script>	
+		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/logging.js"></script> 
+		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/eventing.js"></script> 
+		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/applicationManager.js"></script> 
+
+		<script type="text/javascript">
+		
+			Kindle.use(function(b) 
+			{
+				b.applicationManager.addEventListener('go', function(state)
+				{
+					kindle.net.setWirelessState('on');
+					var settings = { url: 'error.html' };
+
+					if( state.length > 0 )
+					{
+						var stateParts = state.split('&');
+						if( stateParts.length > 0 )
+						{
+							for( var idxPart in stateParts )
+							{
+								if( !stateParts.hasOwnProperty(idxPart ) ) { continue; }
+								var statePart = stateParts[idxPart];
+
+								var pairData = statePart.split('=');
+
+								if( pairData.length === 2 )
+									settings[pairData[0]] = pairData[1];
+							}
+						}
+					}
+
+					kindle.chrome.createContentWindow(settings.url);
+				});
+			});
+		</script>
+	</head>
+	
+	<body>
+	</body>
+
+</html>
