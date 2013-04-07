@@ -7,38 +7,103 @@
 		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/Kindle.js"></script>	
 		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/logging.js"></script> 
 		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/eventing.js"></script> 
+		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/object.js"></script>
+		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/storage.js"></script>
 		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/applicationManager.js"></script> 
 
 		<script type="text/javascript">
-		
+
+			//-----------------------------------------------------------------
+			// Register our handling functions 
 			Kindle.use(function(b) 
 			{
-				b.applicationManager.addEventListener('go', function(state)
+				//-------------------------------------------------------------
+				// Default settings
+				var settings = { 
+					url: 'error.html',
+					title: 'WebLaunch',
+					fullscreen: false
+				};
+
+				//-------------------------------------------------------------
+				// Invoke command as status bar ( exposes nativeBridge )
+				function invokeAsStatusBar(command)
 				{
+					kindle.messaging.sendMessage('com.lab126.pillow', 'interrogatePillow', {"pillowId": "default_status_bar", "function": command});
+				}
+	
+				//-------------------------------------------------------------
+				// Open application
+				function openApp(state)
+				{
+					// Enable networking ( this is a web app )
 					kindle.net.setWirelessState('on');
-					var settings = { url: 'error.html' };
-
-					if( state.length > 0 )
+					
+					var stateJSON = unescape(state);
+					if( stateJSON.length > 0 )
 					{
-						var stateParts = state.split('&');
-						if( stateParts.length > 0 )
+						var suppliedSettings = {};
+	
+						try 
+						{ 
+							suppliedSettings = JSON.parse(stateJSON ); 
+						}
+						catch(err)
 						{
-							for( var idxPart in stateParts )
+							kindle.chrome.createContentWindow("error.html");
+						}	
+			
+						if( typeof(suppliedSettings) === 'object' )
+						{
+							for( var key in settings )
 							{
-								if( !stateParts.hasOwnProperty(idxPart ) ) { continue; }
-								var statePart = stateParts[idxPart];
-
-								var pairData = statePart.split('=');
-
-								if( pairData.length === 2 )
-									settings[pairData[0]] = pairData[1];
+								if( settings.hasOwnProperty(key) && suppliedSettings.hasOwnProperty(key) )
+									settings[key] = suppliedSettings[key];
 							}
 						}
-					}
 
+						try
+						{
+							b.storage.store({ name: 'settings', value: settings });
+						} 
+						catch(err) 
+						{
+							document.write(err); 
+							return;
+						}
+					}
+					else
+					{
+						try
+						{
+							settings = b.storage.retrieve({ name: 'settings' });
+						}
+						catch(err) 
+						{
+							document.write(err); 
+							return;
+						}
+					}
+	
 					kindle.chrome.createContentWindow(settings.url);
-				});
+					kindle.chrome.setTitleBar('', settings.title);
+					if( settings.fullscreen )
+						invokeAsStatusBar("nativeBridge.hideMe();");				
+				}
+
+				//-------------------------------------------------------------
+				// restore status bar on close
+				function closeApp() 
+				{ 
+					lastSettings = settings;
+					invokeAsStatusBar("nativeBridge.showMe();"); 
+				}
+
+				b.applicationManager.addEventListener('go', openApp);
+				b.applicationManager.addEventListener('unload', closeApp);
+				b.applicationManager.addEventListener('pause', closeApp);
 			});
+
 		</script>
 	</head>
 	

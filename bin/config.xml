@@ -41,6 +41,7 @@
         <param name="appmgr" value="yes"/> 
         <param name="net" value="yes"/>
         <param name="gestures" value="yes"/>
+		<param name="messaging" value="yes"/>
     </feature>
 
     <kindle:resources>
@@ -51,6 +52,11 @@
         <kindle:setting name="internetRequired" value="yes"/>
         <kindle:setting name="debug" value="yes"/>
     </kindle:settings>
+
+    <kindle:messaging>
+        <kindle:app name="com.PaulFreund.WebLaunch" value="yes" />
+        <kindle:app name="com.lab126.pillow" value="yes" />
+    </kindle:messaging>
 
     <preference name="logging" value="enabled"/>
 </widget>

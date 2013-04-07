@@ -3,7 +3,7 @@
 ###############################################################################
 ## Configuration variables
 
-APP_FOLDER="/mnt/base-us/extensions/WebLaunch"
+APP_FOLDER="/mnt/us/extensions/WebLaunch"
 
 SETTINGS_FILE="$APP_FOLDER/settings.cfg"
 
@@ -53,6 +53,17 @@ fi
 ###############################################################################
 ## Get the settings
 SETTINGS=$(cat $SETTINGS_FILE)
+SETTINGS=$(echo $SETTINGS | tr -d ' ')
+SETTINGS=$(echo $SETTINGS | tr -d '\t')
+SETTINGS=$(echo $SETTINGS | tr -d '\r')
+SETTINGS=$(echo $SETTINGS | tr -d '\n')
+#SETTINGS=$(echo $SETTINGS | sed 's/\"/A/g')
+#SETTINGS=$(echo $SETTINGS | sed 's/{/A/g')
+#SETTINGS=$(echo $SETTINGS | sed 's/}/A/g')
+#SETTINGS=$(echo $SETTINGS | sed 's/\(..\)/%\1/g')
+
+# I know this isnt nice, but time is rising
+SETTINGS=$(echo $SETTINGS | sed 's/ /%20/g; s/!/%21/g; s/"/%22/g; s/#/%23/g; s/\$/%24/g; s/\&/%26/g; s/'\''/%27/g; s/(/%28/g; s/)/%29/g; s/:/%3A/g; s/{/%7B/g; s/}/%7D/g ; s/,/%2C/g ; s/\//%2F/g ' )                        
 
 ###############################################################################
 ## Start the application
