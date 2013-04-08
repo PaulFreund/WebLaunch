@@ -10,93 +10,61 @@
 		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/object.js"></script>
 		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/storage.js"></script>
 		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/applicationManager.js"></script> 
-
+		
+		<script type="text/javascript" src="pillowHelper.js"></script>
+		
+		<script type="text/javascript" src="../settings.js"></script>
 		<script type="text/javascript">
+
+			//-----------------------------------------------------------------
+			// Small helper function to call runAsDefaultStatusBar with app Id
+			function pillowRun(fkt, callback) 
+			{ 
+				runAsDefaultStatusBar('com.PaulFreund.WebLaunch', fkt, callback); 
+			}
 
 			//-----------------------------------------------------------------
 			// Register our handling functions 
 			Kindle.use(function(b) 
 			{
-				//-------------------------------------------------------------
-				// Default settings
-				var settings = { 
-					url: 'error.html',
-					title: 'WebLaunch',
-					fullscreen: false
-				};
+				var sessionSettings = settings;
 
 				//-------------------------------------------------------------
-				// Invoke command as status bar ( exposes nativeBridge )
-				function invokeAsStatusBar(command)
+				// Default settings if none supplied
+				if( sessionSettings === undefined || sessionSettings === null )
 				{
-					kindle.messaging.sendMessage('com.lab126.pillow', 'interrogatePillow', {"pillowId": "default_status_bar", "function": command});
+					sessionSettings = { 
+						url: 'error.html',
+						title: 'WebLaunch',
+						hideStatusbar: false,
+						enableWireless: false
+					};
 				}
-	
+
 				//-------------------------------------------------------------
 				// Open application
 				function openApp(state)
 				{
-					// Enable networking ( this is a web app )
-					kindle.net.setWirelessState('on');
+					// Enable networking if desired
+					if( sessionSettings.enableWireless )
+						kindle.net.setWirelessState('on');
 					
-					var stateJSON = unescape(state);
-					if( stateJSON.length > 0 )
-					{
-						var suppliedSettings = {};
-	
-						try 
-						{ 
-							suppliedSettings = JSON.parse(stateJSON ); 
-						}
-						catch(err)
-						{
-							kindle.chrome.createContentWindow("error.html");
-						}	
-			
-						if( typeof(suppliedSettings) === 'object' )
-						{
-							for( var key in settings )
-							{
-								if( settings.hasOwnProperty(key) && suppliedSettings.hasOwnProperty(key) )
-									settings[key] = suppliedSettings[key];
-							}
-						}
-
-						try
-						{
-							b.storage.store({ name: 'settings', value: settings });
-						} 
-						catch(err) 
-						{
-							document.write(err); 
-							return;
-						}
-					}
-					else
-					{
-						try
-						{
-							settings = b.storage.retrieve({ name: 'settings' });
-						}
-						catch(err) 
-						{
-							document.write(err); 
-							return;
-						}
-					}
-	
-					kindle.chrome.createContentWindow(settings.url);
-					kindle.chrome.setTitleBar('', settings.title);
-					if( settings.fullscreen )
-						invokeAsStatusBar("nativeBridge.hideMe();");				
+					// Load url 
+					kindle.chrome.createContentWindow(sessionSettings.url);
+					
+					// Set window title
+					kindle.chrome.setTitleBar('', sessionSettings.title);
+					
+					// Remove statusBar if desired
+					if( sessionSettings.hideStatusbar )
+						pillowRun("nativeBridge.hideMe();");				
 				}
 
 				//-------------------------------------------------------------
 				// restore status bar on close
 				function closeApp() 
 				{ 
-					lastSettings = settings;
-					invokeAsStatusBar("nativeBridge.showMe();"); 
+					pillowRun("nativeBridge.showMe();"); 
 				}
 
 				b.applicationManager.addEventListener('go', openApp);

@@ -5,8 +5,6 @@
 
 APP_FOLDER="/mnt/us/extensions/WebLaunch"
 
-SETTINGS_FILE="$APP_FOLDER/settings.cfg"
-
 APPREG="/var/local/appreg.db"
 
 APP_ID="com.PaulFreund.WebLaunch"
@@ -51,27 +49,12 @@ then
 fi
 
 ###############################################################################
-## Get the settings
-SETTINGS=$(cat $SETTINGS_FILE)
-SETTINGS=$(echo $SETTINGS | tr -d ' ')
-SETTINGS=$(echo $SETTINGS | tr -d '\t')
-SETTINGS=$(echo $SETTINGS | tr -d '\r')
-SETTINGS=$(echo $SETTINGS | tr -d '\n')
-#SETTINGS=$(echo $SETTINGS | sed 's/\"/A/g')
-#SETTINGS=$(echo $SETTINGS | sed 's/{/A/g')
-#SETTINGS=$(echo $SETTINGS | sed 's/}/A/g')
-#SETTINGS=$(echo $SETTINGS | sed 's/\(..\)/%\1/g')
-
-# I know this isnt nice, but time is rising
-SETTINGS=$(echo $SETTINGS | sed 's/ /%20/g; s/!/%21/g; s/"/%22/g; s/#/%23/g; s/\$/%24/g; s/\&/%26/g; s/'\''/%27/g; s/(/%28/g; s/)/%29/g; s/:/%3A/g; s/{/%7B/g; s/}/%7D/g ; s/,/%2C/g ; s/\//%2F/g ' )                        
-
-###############################################################################
 ## Start the application - With a few checks and a way to exit via power cycling
 
 SSSTATE=`lipc-get-prop com.lab126.powerd preventScreenSaver`  # The previous setting
 lipc-set-prop com.lab126.powerd preventScreenSaver 0 # prevent screensaver for the application lifetime
 
-lipc-set-prop com.lab126.appmgrd start app://$APP_ID?$SETTINGS
+lipc-set-prop com.lab126.appmgrd start app://$APP_ID
 
 ###############################################################################
 # Watch it, Kill it, restore previous state, restore status bar, toggle power button
