@@ -66,5 +66,20 @@ SETTINGS=$(echo $SETTINGS | tr -d '\n')
 SETTINGS=$(echo $SETTINGS | sed 's/ /%20/g; s/!/%21/g; s/"/%22/g; s/#/%23/g; s/\$/%24/g; s/\&/%26/g; s/'\''/%27/g; s/(/%28/g; s/)/%29/g; s/:/%3A/g; s/{/%7B/g; s/}/%7D/g ; s/,/%2C/g ; s/\//%2F/g ' )                        
 
 ###############################################################################
-## Start the application
+## Start the application - With a few checks and a way to exit via power cycling
+
+SSSTATE=`lipc-get-prop com.lab126.powerd preventScreenSaver`  # The previous setting
+lipc-set-prop com.lab126.powerd preventScreenSaver 0 # prevent screensaver for the application lifetime
+
 lipc-set-prop com.lab126.appmgrd start app://$APP_ID?$SETTINGS
+
+###############################################################################
+# Watch it, Kill it, restore previous state, restore status bar, toggle power button
+# Eureka has a tidier method of restoring status bar TODO: implement that.
+
+( dbus-monitor "interface='com.lab126.powerd',member='goingToScreenSaver'" --system; killall mesquite; lipc-set-prop com.lab126.powerd preventScreenSaver "$SSSTATE"; restart pillow; powerd_test -p; ) & 
+
+usleep 50000  # Breathing time
+killall -INT dbus-monitor  # exeunt
+
+
