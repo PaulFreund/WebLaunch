@@ -17,10 +17,14 @@
 		<script type="text/javascript">
 
 			//-----------------------------------------------------------------
+			// Define the app name for later use
+			var appName = 'com.PaulFreund.WebLaunch';
+			
+			//-----------------------------------------------------------------
 			// Small helper function to call runAsDefaultStatusBar with app Id
 			function pillowRun(fkt, callback) 
 			{ 
-				runAsDefaultStatusBar('com.PaulFreund.WebLaunch', fkt, callback); 
+				pillowHelper.Run('default_status_bar', appName, fkt, callback); 
 			}
 
 			//-----------------------------------------------------------------
