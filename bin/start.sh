@@ -16,6 +16,33 @@ APP_ID_STRING="'$APP_ID'"
 # sqlite3 $APPREG "delete from properties where handlerId=$APP_ID_STRING"
 
 ###############################################################################
+## Register powerbutton handler
+
+FILE_RULES="/etc/udev/rules.d/98-yoshibutton.rules"
+FILE_NOTIFY="/lib/udev/bin/notifyyoshibutton"
+
+#------------------------------------------------------------------------------
+# Rules
+if [ ! -f $FILE_RULES ]
+then
+	mntroot rw
+	echo "KERNEL==\"yoshibutton\",  RUN+=\"$FILE_NOTIFY\"" > $FILE_RULES
+	udevadm control --reload-rules
+	mntroot ro
+fi
+
+#------------------------------------------------------------------------------
+# Notifier
+if [ ! -f $FILE_NOTIFY ]
+then
+	mntroot rw
+	echo '#!/bin/sh' > $FILE_NOTIFY
+	echo '/usr/bin/lipc-set-prop com.lab126.system sendEvent yoshibutton' >> $FILE_NOTIFY
+	chmod +x $FILE_NOTIFY
+	mntroot ro
+fi
+
+###############################################################################
 ## Register application if neccessary
 
 #------------------------------------------------------------------------------
@@ -49,20 +76,9 @@ then
 fi
 
 ###############################################################################
-## Start the application - With a few checks and a way to exit via power cycling
-
-SSSTATE=`lipc-get-prop com.lab126.powerd preventScreenSaver`  # The previous setting
-lipc-set-prop com.lab126.powerd preventScreenSaver 0 # prevent screensaver for the application lifetime
+## Start the application
 
 lipc-set-prop com.lab126.appmgrd start app://$APP_ID
 
-###############################################################################
-# Watch it, Kill it, restore previous state, restore status bar, toggle power button
-# Eureka has a tidier method of restoring status bar TODO: implement that.
-
-( dbus-monitor "interface='com.lab126.powerd',member='goingToScreenSaver'" --system; killall mesquite; lipc-set-prop com.lab126.powerd preventScreenSaver "$SSSTATE"; restart pillow; powerd_test -p; ) & 
-
-usleep 50000  # Breathing time
-killall -INT dbus-monitor  # exeunt
 
 
