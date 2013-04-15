@@ -45,7 +45,7 @@
 				{
 					for( var key in sessionSettings )
 					{
-                		if( !sessionSettings.hasOwnProperty(key) ) { continue; }
+						if( !sessionSettings.hasOwnProperty(key) ) { continue; }
 						if( !settings.hasOwnProperty(key) ) { continue; }
 						sessionSettings[key] = settings[key];
 					}
