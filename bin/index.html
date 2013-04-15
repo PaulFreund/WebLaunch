@@ -12,7 +12,9 @@
 		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/applicationManager.js"></script> 
 		
 		<script type="text/javascript" src="pillowHelper.js"></script>
-		
+		<script type="text/javascript">
+			var settings = undefined;
+		</script>
 		<script type="text/javascript" src="../settings.js"></script>
 		<script type="text/javascript">
 			//-----------------------------------------------------------------
@@ -36,12 +38,12 @@
 					enableWireless: false,
 					powerButtonClose: true
 				};			
-
+				
 				//-------------------------------------------------------------
 				// Copy supplied config properties		
-				if( settings && settings !== undefined && typeof(settings) === 'object' )
-            	{
-              		for( var key in sessionSettings )
+				if( settings !== undefined && typeof(settings) === 'object' )
+				{
+					for( var key in sessionSettings )
 					{
                 		if( !sessionSettings.hasOwnProperty(key) ) { continue; }
 						if( !settings.hasOwnProperty(key) ) { continue; }
@@ -99,7 +101,7 @@
 				function openApp(state)
 				{
 					registerPowerButtonCallback();
-						
+					
 					// Enable networking if desired
 					if( sessionSettings.enableWireless )
 						kindle.net.setWirelessState('on');
