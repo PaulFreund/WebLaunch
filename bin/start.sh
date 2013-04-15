@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ###############################################################################
-## Configuration variables
+## Configuration variables 
 
 APP_FOLDER="/mnt/us/extensions/WebLaunch"
 
