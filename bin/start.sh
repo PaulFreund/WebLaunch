@@ -37,7 +37,7 @@ if [ ! -f $FILE_NOTIFY ]
 then
 	mntroot rw
 	echo '#!/bin/sh' > $FILE_NOTIFY
-	echo '/usr/bin/lipc-set-prop com.lab126.system sendEvent yoshibutton' >> $FILE_NOTIFY
+	echo '/usr/bin/lipc-send-event com.lab126.system.event yoshibutton' >> $FILE_NOTIFY
 	chmod +x $FILE_NOTIFY
 	mntroot ro
 fi
