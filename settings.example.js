@@ -3,5 +3,6 @@ var settings = {
 	title: 'MobileRead', 
 	hideStatusbar: true,
 	enableWireless: true,
-	powerButtonClose: true
+	powerButtonClose: true,
+	enablePreventScreenSaver: false
 };

@@ -28,6 +28,7 @@
 				//-------------------------------------------------------------
 				// Define the app name for later use
 				var appName = 'com.PaulFreund.WebLaunch';
+				var preventScreenSaverStateBackup  = null;
 
 				//-------------------------------------------------------------
 				// Default settings if none supplied			
@@ -36,7 +37,8 @@
 					title: 'WebLaunch',
 					hideStatusbar: false,
 					enableWireless: false,
-					powerButtonClose: true
+					powerButtonClose: true,
+					enablePreventScreenSaver: false
 				};			
 				
 				//-------------------------------------------------------------
@@ -63,8 +65,40 @@
 				}
 				
 				//-------------------------------------------------------------
+				// Get the initial state of preventScreenSaver and change it 		
+				function requestPreventScreenSaverState()
+				{
+					// Get state
+					pillowRun(
+						"return nativeBridge.getIntLipcProperty('com.lab126.powerd', 'preventScreenSaver');", 
+						function(state)
+						{
+							if( typeof(state) === 'number' && (state === 0 || state === 1 ) )
+							{
+								preventScreenSaverStateBackup = state;
+								setPreventScreenSaverState(1);
+							}
+						}
+					);
+				}
+				
+				//-------------------------------------------------------------
+				// Get the initial state of preventScreenSaver and change it 		
+				function setPreventScreenSaverState(state)
+				{				
+					if( typeof(state) === 'number' && (state === 0 || state === 1 ) )
+					{
+						pillowRun(	
+							"nativeBridge.setIntLipcProperty('com.lab126.powerd','preventScreenSaver',"
+							+state
+							+");"
+						); 
+					}
+				}
+				
+				//-------------------------------------------------------------
 				// Close the application
-				function closeApplication()
+				function exitApplication()
 				{
 					// Close the application
 					if( sessionSettings.powerButtonClose )
@@ -80,7 +114,7 @@
 						function(value) 
 						{
 							if( value.eventName && value.eventName === 'yoshibutton')
-								closeApplication();
+								exitApplication();
 						}
 					);
 					
@@ -102,6 +136,9 @@
 				{
 					registerPowerButtonCallback();
 					
+					if( sessionSettings.enablePreventScreenSaver )
+						requestPreventScreenSaverState();
+					
 					// Enable networking if desired
 					if( sessionSettings.enableWireless )
 						kindle.net.setWirelessState('on');
@@ -121,6 +158,9 @@
 				// restore status bar on close
 				function closeApp() 
 				{ 
+					if( preventScreenSaverStateBackup !== null )
+						setPreventScreenSaverState(preventScreenSaverStateBackup);
+				
 					pillowHelper.UnRegisterStatusBarEventCallback(appName);
 					pillowRun("nativeBridge.showMe();"); 
 				}
