@@ -4,5 +4,6 @@ var settings = {
 	hideStatusbar: true,
 	enableWireless: true,
 	powerButtonClose: true,
-	enablePreventScreenSaver: false
+	enablePreventScreenSaver: false,
+	landscape: false
 };

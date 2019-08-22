@@ -10,6 +10,10 @@
 		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/object.js"></script>
 		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/storage.js"></script>
 		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/applicationManager.js"></script> 
+
+		<!-- For orientation -->
+		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/enums.js"></script>
+		<script type="text/javascript" src="/var/local/mesquite/shared/javascripts/device.js"></script>
 		
 		<script type="text/javascript" src="pillowHelper.js"></script>
 		<script type="text/javascript">
@@ -38,7 +42,8 @@
 					hideStatusbar: false,
 					enableWireless: false,
 					powerButtonClose: true,
-					enablePreventScreenSaver: false
+					enablePreventScreenSaver: false,
+					landscape: false
 				};			
 				
 				//-------------------------------------------------------------
@@ -152,6 +157,10 @@
 					// Remove statusBar if desired
 					if( sessionSettings.hideStatusbar )
 						pillowRun("nativeBridge.hideMe();");				
+
+					// Set orientation to landscape if desired
+					if ( sessionSettings.landscape )
+						b.device.orientation = b.enums.orientations.landscape;
 				}
 
 				//-------------------------------------------------------------
