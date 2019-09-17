@@ -42,6 +42,7 @@
         <param name="net" value="yes"/>
         <param name="gestures" value="yes"/>
         <param name="messaging" value="yes"/>
+        <param name="dev" value="yes"/>
     </feature>
 
     <kindle:resources>
